@@ -32,6 +32,11 @@ class MemeEditVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         textField.textAlignment = .center
     }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
+    }
+    
     func setupInitialView() {
         imagePickerView.image = nil
         camera.isEnabled = true
@@ -105,6 +110,9 @@ class MemeEditVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         super.viewDidLoad()
         setupInitialView()
         view.backgroundColor = UIColor.gray
+        
+        self.bottomText.delegate = true as? UITextFieldDelegate
+        self.topText.delegate = true as? UITextFieldDelegate
      }
     
     // Album button function
@@ -145,19 +153,30 @@ class MemeEditVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     
     func generateMemeImage()-> UIImage {
         
-        toolBar.isHidden = true
-        navigationBar.isHidden = true
+        hideToolbar(true)
         
         UIGraphicsBeginImageContext(self.view.frame.size)
         view.drawHierarchy(in: self.view.frame, afterScreenUpdates: true)
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         
-        toolBar.isHidden = false
-        navigationBar.isHidden  = false
+        showToolbar(false)
         
         return memedImage
     }
+    
+    @discardableResult func hideToolbar(_ hide: Bool) -> Bool{
+        toolBar.isHidden = hide
+        navigationBar.isHidden = hide
+        return true
+    }
+    
+    @discardableResult func showToolbar(_ show:Bool) -> Bool {
+        toolBar.isHidden = show
+        navigationBar.isHidden = show
+        return false
+    }
+    
     
     //shareButton function
     @IBAction func shareImage(_ sender: Any) {
